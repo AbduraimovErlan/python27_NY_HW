@@ -7,11 +7,19 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-    def product_count(self):
-        try:
-            return self.category.name
-        except:
-            return None
+
+
+    @property
+    def products_count(self):
+        return self.product_set.count()
+
+    def products_list(self):
+        return [product.title for product in self.product_set.all()]
+
+
+
+
+
 
 class Product(models.Model):
     title = models.CharField(max_length=100)
@@ -24,7 +32,7 @@ class Product(models.Model):
 
     @property
     def list_review(self):
-        return self.product_rating.all()
+        return self.product_rating.name
 
     @property
     def category_name(self):
@@ -33,7 +41,10 @@ class Product(models.Model):
         except:
             return None
 
-
+    @property
+    def rating(self):
+        stars_list = [review.stars for review in self.reviews.all()]
+        return round(sum(stars_list) / len(stars_list), 2)
 
 
 
@@ -44,7 +55,6 @@ STAR_CHOICES = (
     (4, 4 * '* '),
     (5, 5 * '* '),
 )
-
 class Review(models.Model):
     text = models.TextField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_rating')
@@ -53,13 +63,10 @@ class Review(models.Model):
     def __str__(self):
         return self.product
 
-
     @property
     def product_name(self):
-
         return self.product.title if self.product.title else ""
 
-    @property
-    def count_reviews(self):
-        return Review.stars.model.mean
+
+
 
