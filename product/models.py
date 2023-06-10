@@ -16,6 +16,11 @@ class Category(models.Model):
     def products_list(self):
         return [product.title for product in self.product_set.all()]
 
+class Tag(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(models.Model):
@@ -23,7 +28,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.PositiveIntegerField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
-
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
     def __str__(self):
         return self.title
 
