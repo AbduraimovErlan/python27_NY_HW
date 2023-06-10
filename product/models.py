@@ -1,13 +1,13 @@
 from django.db import models
 
 
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
-
-
 
     @property
     def products_count(self):
@@ -18,55 +18,49 @@ class Category(models.Model):
 
 
 
-
-
-
 class Product(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     price = models.PositiveIntegerField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
 
     def __str__(self):
         return self.title
 
     @property
-    def list_review(self):
-        return self.product_rating.name
+    def reviews(self):
+        return self.review_set.all()
 
     @property
     def category_name(self):
-        try:
-            return self.category.name
-        except:
-            return None
+        return self.category.name if self.category else ""
 
     @property
     def rating(self):
-        stars_list = [review.stars for review in self.reviews.all()]
-        return round(sum(stars_list) / len(stars_list), 2)
+        stars_list = [review.stars for review in self.reviews]
+        return round(sum(stars_list) / len(stars_list), 2) if stars_list else 0
 
 
 
 STAR_CHOICES = (
-    (1, '* '),
-    (2, 2 * '* '),
-    (3, 3 * '* '),
-    (4, 4 * '* '),
-    (5, 5 * '* '),
+    (1, '*'),
+    (2, '**'),
+    (3, '***'),
+    (4, '****'),
+    (5, '*****'),
 )
 class Review(models.Model):
     text = models.TextField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_rating')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     stars = models.IntegerField(default=5, choices=STAR_CHOICES, null=True)
 
+
     def __str__(self):
-        return self.product
+        return self.text
 
     @property
     def product_name(self):
-        return self.product.title if self.product.title else ""
-
+        return self.product.title if self.product else ""
 
 
 
