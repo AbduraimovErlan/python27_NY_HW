@@ -1,11 +1,9 @@
-from . import views
 from django.urls import path
-
-
+from users import views
 
 
 urlpatterns =[
-    path('authorization/', views.authorization_view),
-    path('registration/', views.registration_view),
-    path('confirm/', views.confirm_user_view),
+    path('authorization/', views.AuthorizationAPIView.as_view()),
+    path('registration/', views.RegistrationAPIView.as_view()),
+    path('confirm/', views.Confirm_userAPIView.as_view()),
 ]
