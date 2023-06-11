@@ -57,6 +57,7 @@ def products_reviews_rating_view(request):
 
 @api_view(['GET', 'POST'])
 def product_list_create_api_view(request):
+    print(request.user)
     if request.method == 'GET':
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
